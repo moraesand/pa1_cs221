@@ -12,8 +12,8 @@
  * Return the dimension(width or height) of the block.
 **/
 int Block::Dimension() const {
-	cout << "hello world" << endl;
-	return 0;
+	if (data.empty()) { return 0; } // if there is no image
+	return data.size(); // since rows & columns are the same, return one of them
 }
 
 /**
@@ -35,7 +35,18 @@ void Block::Render(PNG& img, int x, int y, int scale) const {
  * in img. Assumes img is large enough to supply these pixels.
 **/
 void Block::Build(PNG& img, int x, int y, int dimension) {
-	/* your code here */
+	// redimension the block vector to (dimension x dimension)
+	data.resize(dimension); // row
+	for (auto& row : data) { // column
+    	row.resize(dimension);
+	}
+
+	for (int i = x; i < x+dimension; i++) {
+		for (int j = y; j < y+dimension; j++) {
+			RGBAPixel pixel = *img.getPixel(i + x, j + y); // get RGBAPixel value from img
+			data[i - x][j - y] = pixel; // append to block from (0,0) to (dimension-1, -)
+		}
+	}
 
 }
 
