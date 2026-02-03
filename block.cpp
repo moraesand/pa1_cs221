@@ -12,7 +12,7 @@
  * Return the dimension(width or height) of the block.
 **/
 int Block::Dimension() const {
-	/* your code here */
+	cout << "hello world" << endl;
 	return 0;
 }
 
