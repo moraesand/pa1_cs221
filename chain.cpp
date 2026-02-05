@@ -26,7 +26,7 @@
  * @pre   imIn's height will be exactly divisible by the resulting block dimension
 **/
 Chain::Chain(PNG& imIn, int numCols) {
-    /* your code here */
+    cout << "hello world!" << endl;
 
 }
 
