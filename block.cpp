@@ -73,6 +73,15 @@ void Block::Build(PNG& img, int x, int y, int dimension) {
  *       7 8 9      3 6 9
 **/
 void Block::Transpose() {
-	/* your code here */
+	
+	// create copy of data
+	vector<vector<RGBAPixel>> arr = data;
+
+	// assumes that data is a (n x n) matrix
+	for (int i = 0; i < Dimension(); i++) { 
+		for (int j = 0; j < Dimension(); j++) {
+			data[i][j] = arr[j][i]; // transpose
+		}
+	}
 
 }
