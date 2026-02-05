@@ -25,8 +25,23 @@ int Block::Dimension() const {
  * @pre scale >= 1
 **/
 void Block::Render(PNG& img, int x, int y, int scale) const {
-	/* your code here */
-
+	// loop through block
+	for (int i = x; i < x + Dimension(); i++) {
+		for (int j = y; j < y + Dimension(); j++) {
+			RGBAPixel colour = data[i][j]; // get colour from block
+			
+			// loop to replace pixel w/ color (dependent on scale factor)
+			for (int dx = 0; dx < scale; dx++ ){ 
+				for (int dy = 0; dy < scale; dy++) {
+					// find pixel pointer 
+					RGBAPixel* pixel = 
+					img.getPixel(x + i*scale + dx, y + j*scale + dy);
+					*pixel = colour; // replace colour to pixel
+				}
+			}
+			
+		}
+	}
 }
 
 /**
