@@ -32,15 +32,19 @@ Chain::Chain(PNG& imIn, int numCols) {
     head_ = nullptr;
     length_ = 0;
 
-    int width = imIn.width() / numCols;
-    int height = imIn.height() / width;
+    int block_width = imIn.width() / numCols;
+    int block_height = imIn.height() / width;
 
     this->cols_ = numCols;
-    this->rows_ = height;
+    this->rows_ = block_height;
 
-    for (int r = 0; r < height; r++) {
+    for (int r = 0; r < block_height; r++) {
         for (int c = 0; c < numCols; c++) {
+            Block b;
+            b.build(imIn, c*dim, r*dim, dim);
 
+            curr = InsertAfter(curr, b);
+            // cuz we need to use InsertAfter, must have b.build();
         }
     }
 
