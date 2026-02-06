@@ -19,6 +19,10 @@
  * given image in rows. The blocks we create
  * have width equal to imIn.width()/numCols
  * and height equal to imIn.height() / block width.
+ * 
+ *  Constructor builds the linked list by 
+ *  dividing the input image into square blocks such that 
+ *  the divided image has numCols columns.
  *
  * @param imIn     The image providing the blocks
  * @param numCols  The number of block columns into which the image will be divided
@@ -26,8 +30,7 @@
  * @pre   imIn's height will be exactly divisible by the resulting block dimension
 **/
 Chain::Chain(PNG& imIn, int numCols) {
-    cout << "hello world!" << endl;
-
+    
 }
 
 /**
@@ -84,8 +87,48 @@ void Chain::Copy(Chain const &other) {
  * @pre scale >= 1
 **/
 PNG Chain::Render(int scale) {
-    /* your code here */
-    return PNG();
+    // conditional if there is no blocks in chain
+    if (NW == nullptr) { return PNG(); }
+    int blockDim = NW->data.Dimension(); // find the dimension of each block
+
+    // output image dimensions
+    int WidthDim = blockDim * scale * columns_;
+    int HeightDim = blockDim * scale * rows_;
+
+    PNG out(WidthDim, HeightDim); // empty PNG w/ said dimensions
+
+    Node* curr = NW; // current block being handled
+    int index = 0;
+
+    // loop until curr reaches nullptr
+    while (curr != nullptr) { 
+        int row, col;
+        
+        // checks if the chain is row or column dependent
+        if (roworder) {  
+            row = index / columns_;
+            col = index % columns_;
+        } else {
+            row = index / rows_;
+            col = index % rows_;
+        }
+
+        /*
+            convert row (currently in block dimensions) 
+            into usable pixel dimensions 
+        */
+        int x = row * blockDim * scale; 
+        int y = col * blockDim * scale;
+        
+        // render block in curr onto out PNG
+        curr->data.Render(out, x, y, scale);
+        curr = curr->next; // move curr to next node
+        index++; 
+
+    }
+
+
+    return out; // return out PNG()
 }
 
 /**
