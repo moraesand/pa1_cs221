@@ -1,7 +1,7 @@
 /**
  * @file chain.cpp
  * @description Student implementation of Chain functions, CPSC 221 PA1
- * @author (your CWLs here)
+ * @author jkoo02
 **/
 
 
@@ -37,7 +37,7 @@ Chain::Chain(PNG& imIn, int numCols) {
 **/
 Chain::~Chain() {
 	/* your code here */
-    
+    Clear();
 }
 
 /**
@@ -52,7 +52,20 @@ Chain::~Chain() {
 **/
 Node* Chain::InsertAfter(Node* p, const Block &ndata) {
 	/* your code here */
-	return nullptr;
+
+    Node* newNode = new Node(ndata);
+
+    if (p == nullptr) {
+        newNode->next = head_;
+        head_ = newNode;
+    } else {
+        newNode->next = p->next;
+        p->next = newNode;
+    }
+
+    length_++;
+
+	return newNode;
 }
 
 /**
@@ -61,6 +74,18 @@ Node* Chain::InsertAfter(Node* p, const Block &ndata) {
 **/
 void Chain::Clear() {
 	/* your code here */
+
+    Node* curr = head_;
+
+    while (curr != nullptr) {
+        Node* next = curr->next;
+        delete curr;
+        curr = next;
+    }
+
+    head_  = nullptr;
+    length_ = 0; //if head is nullptr, the entire length must be 0.
+
 
 }
 
