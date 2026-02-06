@@ -28,6 +28,21 @@
 **/
 Chain::Chain(PNG& imIn, int numCols) {
     /* your code here */
+    Node* curr = nullptr
+    head_ = nullptr;
+    length_ = 0;
+
+    int width = imIn.width() / numCols;
+    int height = imIn.height() / width;
+
+    this->cols_ = numCols;
+    this->rows_ = height;
+
+    for (int r = 0; r < height; r++) {
+        for (int c = 0; c < numCols; c++) {
+
+        }
+    }
 
 }
 
