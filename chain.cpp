@@ -117,7 +117,16 @@ void Chain::Clear() {
 **/
 void Chain::Copy(Chain const &other) {
 	/* your code here */
+    this->cols_ = other.cols_;
+    this->rows_ = other.rows_;
 
+    Node* curr = NW;
+    Node* otherCurr = other.head_;
+
+    while (otherCurr != nullptr) {
+        curr->next = otherCurr->next;
+        otherCurr = otherCurr->next;
+    }
 }
 
 /**

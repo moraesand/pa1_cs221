@@ -29,19 +29,14 @@ void Block::Render(PNG& img, int x, int y, int scale) const {
 	for (int i = x; i < x + Dimension(); i++) {
 		for (int j = y; j < y + Dimension(); j++) {
 			RGBAPixel colour = data[i][j]; // get colour from block
-			
-			// loop to replace pixel w/ color (dependent on scale factor)
-			for (int dx = 0; dx < scale; dx++ ){ 
-				for (int dy = 0; dy < scale; dy++) {
-					// find pixel pointer 
-					RGBAPixel* pixel = 
-					img.getPixel(x + i*scale + dx, y + j*scale + dy);
-					*pixel = colour; // replace colour to pixel
-				}
-			}
+            RGBAPixel * pixel = img.getPixel(i,j);
+            pixel->r = colour->r;
+            pixel->g = colour->g;
+            pixel->b = colour->b;
 			
 		}
 	}
+    return img;
 }
 
 /**
