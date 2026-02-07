@@ -1,8 +1,9 @@
 /**
  * @file chain.cpp
  * @description Student implementation of Chain functions, CPSC 221 PA1
- * @author (your CWLs here)
+ * @author jkoo02
 **/
+
 
 #include "chain.h"
 #include <cmath>
@@ -27,6 +28,21 @@
 **/
 Chain::Chain(PNG& imIn, int numCols) {
     /* your code here */
+    int dim = imIn.width() / numCols;
+    rows_ = imIn.height() / dim;
+    columns_ = numCols;
+    length_ = 0;
+    head_ = nullptr;
+    NW = nullptr;
+    roworder = true;
+
+    for (int r = 0; r < rows_;  r++) {
+        for (int c = 0; c < columns_; c++) {
+            Block b;
+            b.Build(imIn, c * dim, r * dim, dim);
+            
+        }
+    };
 
 }
 
@@ -36,7 +52,7 @@ Chain::Chain(PNG& imIn, int numCols) {
 **/
 Chain::~Chain() {
 	/* your code here */
-    
+    Clear();
 }
 
 /**
@@ -51,7 +67,20 @@ Chain::~Chain() {
 **/
 Node* Chain::InsertAfter(Node* p, const Block &ndata) {
 	/* your code here */
-	return nullptr;
+    head_ = NW;
+    Node* newNode = new Node(ndata);
+
+    if (p == nullptr) {
+        newNode->next = head_;
+        head_ = newNode;
+    } else {
+        newNode->next = p->next;
+        p->next = newNode;
+    }
+
+    length_++;
+
+	return newNode;
 }
 
 /**
@@ -60,6 +89,18 @@ Node* Chain::InsertAfter(Node* p, const Block &ndata) {
 **/
 void Chain::Clear() {
 	/* your code here */
+
+    Node* curr = head_;
+
+    while (curr != nullptr) {
+        Node* next = curr->next;
+        delete curr;
+        curr = next;
+    }
+
+    head_  = nullptr;
+    length_ = 0; //if head is nullptr, the entire length must be 0.
+
 
 }
 
@@ -72,7 +113,16 @@ void Chain::Clear() {
 **/
 void Chain::Copy(Chain const &other) {
 	/* your code here */
+    this->columns_ = other.columns_;
+    this->rows_ = other.rows_;
 
+    Node* curr = NW;
+    Node* otherCurr = other.head_;
+
+    while (otherCurr != nullptr) {
+        curr->next = otherCurr->next;
+        otherCurr = otherCurr->next;
+    }
 }
 
 /**
