@@ -1,7 +1,7 @@
 /**
  * @file chain-private.h
  * 
- * @author (your CWLs here)
+ * @author jkoo02
  * 
  * If you want to define private member functions or attributes for Chain,
  * write the declarations below.
@@ -15,7 +15,9 @@
  * 
  * void MyPrivateFunction(int arg1, double arg2);
  * 
+ * 
  * THIS FILE MUST BE SUBMITTED
  * EVEN IF YOU DO NOT DECLARE ANYTHING
 **/
-
+int length_; //length of the singly linked list
+Node* head_;
