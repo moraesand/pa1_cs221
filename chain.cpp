@@ -28,25 +28,21 @@
 **/
 Chain::Chain(PNG& imIn, int numCols) {
     /* your code here */
-    Node* curr = nullptr;
-    Node* head_ = nullptr;
-    int length_ = 0;
+    int dim = imIn.width() / numCols;
+    rows_ = imIn.height() / dim;
+    columns_ = numCols;
+    length_ = 0;
+    head_ = nullptr;
+    NW = nullptr;
+    roworder = true;
 
-    int block_width = imIn.width() / numCols;
-    int block_height = imIn.height() / block_width;
-
-    this->columns_ = numCols;
-    this->rows_ = block_height;
-
-    for (int r = 0; r < block_height; r++) {
-        for (int c = 0; c < numCols; c++) {
+    for (int r = 0; r < rows_;  r++) {
+        for (int c = 0; c < columns_; c++) {
             Block b;
-            b.Build(imIn, c*b.Dimension(), r*b.Dimension(), b.Dimension());
-
-            curr = InsertAfter(curr, b);
-            // cuz we need to use InsertAfter, must have b.build();
+            b.Build(imIn, c * dim, r * dim, dim);
+            
         }
-    }
+    };
 
 }
 
@@ -71,7 +67,7 @@ Chain::~Chain() {
 **/
 Node* Chain::InsertAfter(Node* p, const Block &ndata) {
 	/* your code here */
-    Node* head_ = NW;
+    head_ = NW;
     Node* newNode = new Node(ndata);
 
     if (p == nullptr) {
