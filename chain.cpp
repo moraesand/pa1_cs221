@@ -1,81 +1,190 @@
 /**
- * @file block.cpp
- * @description Student implementation of Block functions, CPSC 221 PA1
- * @author (your CWLs here)
+ * @file chain.cpp
+ * @description Student implementation of Chain functions, CPSC 221 PA1
+ * @author jkoo02
 **/
 
-#include "block.h"
+
+#include "chain.h"
 #include <cmath>
 #include <iostream>
 
-/**
- * Return the dimension(width or height) of the block.
+
+// PA1 functions
+// Complete all of the missing implementation
+// and submit this file for grading.
+
+/* Most useful constructor. Most easily implemented using your
+ * implementation of Block.Build and Chain.InsertAfter.
+ * Builds a chain out of the blocks in the
+ * given image in rows. The blocks we create
+ * have width equal to imIn.width()/numCols
+ * and height equal to imIn.height() / block width.
+ *
+ * @param imIn     The image providing the blocks
+ * @param numCols  The number of block columns into which the image will be divided
+ * @pre   imIn's width is exactly divisible by numCols
+ * @pre   imIn's height will be exactly divisible by the resulting block dimension
 **/
-int Block::Dimension() const {
-	if (data.empty()) { return 0; } // if there is no image
-	return data.size(); // since rows & columns are the same, return one of them
+Chain::Chain(PNG& imIn, int numCols) {
+    /* your code here */
+    Node* curr = nullptr;
+    Node* head_ = nullptr;
+    int length_ = 0;
+
+    int block_width = imIn.width() / numCols;
+    int block_height = imIn.height() / block_width;
+
+    this->columns_ = numCols;
+    this->rows_ = block_height;
+
+    for (int r = 0; r < block_height; r++) {
+        for (int c = 0; c < numCols; c++) {
+            Block b;
+            b.Build(imIn, c*b.Dimension(), r*b.Dimension(), b.Dimension());
+
+            curr = InsertAfter(curr, b);
+            // cuz we need to use InsertAfter, must have b.build();
+        }
+    }
+
 }
 
 /**
- * Renders the given block onto img with its upper
- * left corner at (x, y). Assumes the rendered block fits on the
- * image.
- * The block is enlarged using nearest-neighbour scaling
+ * Destroys the current Chain. This function should ensure that
+ * memory does not leak on destruction of a chain.
+**/
+Chain::~Chain() {
+	/* your code here */
+    Clear();
+}
+
+/**
+ * Inserts a new node after the node pointed to by p in the
+ * chain (so p->next is the new node) and returns a pointer to
+ * the newly created node.
+ * If p is NULL, inserts a new head node to the chain.
+ *
+ * @param p = The new node should be pointed to by p->next.
+ *            If p is NULL, the new node becomes the head of the chain.
+ * @param ndata = The data to be inserted.
+**/
+Node* Chain::InsertAfter(Node* p, const Block &ndata) {
+	/* your code here */
+    Node* head_ = NW;
+    Node* newNode = new Node(ndata);
+
+    if (p == nullptr) {
+        newNode->next = head_;
+        head_ = newNode;
+    } else {
+        newNode->next = p->next;
+        p->next = newNode;
+    }
+
+    length_++;
+
+	return newNode;
+}
+
+/**
+ * Destroys all dynamically allocated memory associated with the
+ * current Chain class.
+**/
+void Chain::Clear() {
+	/* your code here */
+
+    Node* curr = head_;
+
+    while (curr != nullptr) {
+        Node* next = curr->next;
+        delete curr;
+        curr = next;
+    }
+
+    head_  = nullptr;
+    length_ = 0; //if head is nullptr, the entire length must be 0.
+
+
+}
+
+/**
+ * Makes the current object into a copy of the parameter:
+ * All member variables should have the same value as
+ * those of other, but the memory should be completely
+ * independent. This function is used in both the copy
+ * constructor and the assignment operator for Chains.
+**/
+void Chain::Copy(Chain const &other) {
+	/* your code here */
+    this->columns_ = other.columns_;
+    this->rows_ = other.rows_;
+
+    Node* curr = NW;
+    Node* otherCurr = other.head_;
+
+    while (otherCurr != nullptr) {
+        curr->next = otherCurr->next;
+        otherCurr = otherCurr->next;
+    }
+}
+
+/**
+ * Takes the current chain and renders it into a
+ * correctly sized PNG. The blocks in the chain
+ * are placed in the image according to their row/column positions in the chain.
+ * The output image will be enlarged using nearest-neighbour scaling
  * (i.e. no pixel blending).
  * @pre scale >= 1
 **/
-void Block::Render(PNG& img, int x, int y, int scale) const {
-	// loop through block
-	for (int i = x; i < x + Dimension(); i++) {
-		for (int j = y; j < y + Dimension(); j++) {
-			RGBAPixel * colour = data[i][j]; // get colour from block
-            RGBAPixel * pixel = img.getPixel(i,j);
-            pixel->r = colour->r;
-            pixel->g = colour->g;
-            pixel->b = colour->b;
-			
-		}
-	}
+PNG Chain::Render(int scale) {
+    /* your code here */
+    return PNG();
 }
 
 /**
- * Creates a block that is dimension X dimension pixels in size
- * by copying the pixels from (x, y) to (x+dimension-1, y+dimension-1)
- * in img. Assumes img is large enough to supply these pixels.
+ * Rearranges the links in the list so that each node's
+ * next pointer moves horizontally across an image, respecting
+ * the image's number of columns and rows.
+ * 
+ * Has no effect on a list which is already in row order.
 **/
-void Block::Build(PNG& img, int x, int y, int dimension) {
-	// redimension the block vector to (dimension x dimension)
-	data.resize(dimension); // row
-	for (auto& row : data) { // column
-    	row.resize(dimension);
-	}
-
-	for (int i = x; i < x+dimension; i++) {
-		for (int j = y; j < y+dimension; j++) {
-			RGBAPixel pixel = *img.getPixel(i + x, j + y); // get RGBAPixel value from img
-			data[i - x][j - y] = pixel; // append to block from (0,0) to (dimension-1, -)
-		}
-	}
+void Chain::ToRowOrder() {
+    /* your code here */
 
 }
 
 /**
- * Rearranges the image data in this Block so that it is transposed
- * (flipped) over the diagonal line from upper-left to lower-right
- * e.g.  1 2 3      1 4 7
- *       4 5 6  ->  2 5 8
- *       7 8 9      3 6 9
+ * Rearranges the links in the list so that each node's
+ * next pointer moves vertically across an image, respecting
+ * the image's number of columns and rows.
+ *
+ * Has no effect on a list which is already in column order.
 **/
-void Block::Transpose() {
-	
-	// create copy of data
-	vector<vector<RGBAPixel>> arr = data;
-
-	// assumes that data is a (n x n) matrix
-	for (int i = 0; i < Dimension(); i++) { 
-		for (int j = 0; j < Dimension(); j++) {
-			data[i][j] = arr[j][i]; // transpose
-		}
-	}
+void Chain::ToColumnOrder() {
+    /* your code here */
 
 }
+
+/**
+ * Rearranges the links in the list and each node's Block data
+ * so that the rendered image appears transposed over the NW-SE diagonal.
+ * 
+ * e.g.
+ * 
+ *  A -> B                     A     C  (individual blocks must also be transposed)
+ *      /    --Transpose-->    |   / |
+ *    /                        v /   v
+ *  C -> D                     B     D
+**/
+void Chain::Transpose() {
+    /* your code here */
+
+}
+
+/**************************************************
+* IF YOU HAVE DECLARED PRIVATE FUNCTIONS IN       *
+* chain-private.h, COMPLETE THEIR IMPLEMENTATIONS *
+* HERE                                            *
+**************************************************/
+
